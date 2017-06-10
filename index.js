@@ -14,11 +14,16 @@ var grid = [];
 for (var i = 0; i < 4; i++) {
     grid[i] = [0, 0, 0, 0];
 }
-for (var i = 0; i < 4; i++) {
-    for (var j = 0; j < 4; j++) {
-        drawcell(i, j);
+function flushUI() {
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4; j++) {
+            drawcell(i, j);
+        }
+
     }
 }
+flushUI();
+
 function oppearNumber() {
     return Math.floor(Math.random() * 4);
 }
@@ -50,7 +55,36 @@ drawcell(xIndex, yIndex);
 
 document.addEventListener('keydown', function (event) {
     if (event.key === 'ArrowRight') {
-        console.log(event);
+        moveCellToRight();
+        flushUI();
     }
 
 });
+function moveCellToRight() {
+    for (var xIndex = 0; xIndex < 4; xIndex++) {
+        for (var yIndex = 2; yIndex >= 0; yIndex--) {
+            if (grid[xIndex][yIndex] === 0) continue;
+            var theEmptyCellIndex = findTheFirstRightCell(xIndex, yIndex);
+            if (theEmptyCellIndex !== -1) {
+                grid[xIndex][theEmptyCellIndex] = grid[xIndex][yIndex];
+                grid[xIndex][yIndex] = 0;
+
+                if (grid[xIndex][theEmptyCellIndex] === grid[xIndex][theEmptyCellIndex + 1]) {
+                    grid[xIndex][theEmptyCellIndex + 1] += grid[xIndex][theEmptyCellIndex];
+                    grid[xIndex][theEmptyCellIndex] = 0;
+                }
+            }
+        }
+    }
+}
+
+
+function findTheFirstRightCell(xIndex, yIndex) {
+    for (var i = 3; i > yIndex; i--) {
+        if (grid[xIndex][i] === 0) {
+            return i;
+        }
+    }
+
+    return -1;
+}
